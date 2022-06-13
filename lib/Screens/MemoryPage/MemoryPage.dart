@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memory_notebook/MyBackGround/MyBackground.dart';
+import 'package:memory_notebook/MyBackGround/MyDrawer.dart';
 import 'package:memory_notebook/Screens/MemoryPage/MemoryScreens/MemoryList.dart';
 import 'MemoryScreens/MemoryAdd.dart';
 
@@ -9,6 +10,7 @@ class MemoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: MyDrawer(),
       appBar: AppBar(
         title: const Text("ANILARIN"),
         backgroundColor: Colors.indigo[300],

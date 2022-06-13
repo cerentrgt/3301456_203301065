@@ -1,10 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:memory_notebook/MyBackGround/DreamBackground.dart';
 import 'package:memory_notebook/Screens/DreamPage/DreamScreens/DreamAdd.dart';
-import 'package:memory_notebook/data/DreamDbHelper.dart';
-import 'package:memory_notebook/models/DreamModel.dart';
+import 'package:memory_notebook/service/StatusService.dart';
 
-import 'DreamDetail.dart';
 
 class DreamList extends StatefulWidget {
   const DreamList({Key? key}) : super(key: key);
@@ -14,16 +12,7 @@ class DreamList extends StatefulWidget {
 }
 
 class _DreamListState extends State<DreamList> {
-  var dbHelper = DreamDbHelper();
-
-  List<DreamModel>? dreams;
-
-  int dreamCount = 0;
-
-  @override
-  void initState() {
-    getDream();
-  }
+  StatusService statusService = StatusService();
 
   @override
   Widget build(BuildContext context) {
@@ -32,92 +21,115 @@ class _DreamListState extends State<DreamList> {
         title: const Text("HAYALLERİM"),
         backgroundColor: Colors.indigo[300],
       ),
-      body: DreamBackground(
-        child: DreamListBody(),
-      ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.miniCenterFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.indigo[300],
         onPressed: () {
-          goToDreamAdd();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const DreamAdd(),
+            ),
+          );
         },
         child: const Icon(
           Icons.add_to_photos_sharp,
         ),
       ),
+      body: _body(),
     );
   }
 
-  ListView DreamListBody() {
-    return ListView.builder(
-        itemCount: dreamCount,
-        itemBuilder: (BuildContext context, int position) {
-          return Card(
-            color: Colors.blue[100],
-            elevation: 2.0,
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Colors.black38,
-                child: Icon(Icons.menu_book_sharp, color: Colors.white),
-              ),
-              title: Text(
-                this.dreams![position].name,
-                style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: Colors.blue[700],
-                    fontStyle: FontStyle.italic,
-                    fontSize: 20),
-              ),
-              subtitle: Text(
-                this.dreams![position].descriptions,
-                style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: Colors.blueAccent[200],
-                    fontStyle: FontStyle.italic,
-                    fontSize: 13),
-              ),
-              onTap: () {
-                goToDetail(this.dreams![position]);
-              },
-            ),
-          );
+  StreamBuilder _body() {
+    return StreamBuilder<QuerySnapshot>(
+        stream: statusService.getStatus(),
+        builder: (context, snapshot) {
+          return !snapshot.hasData
+              ? const CircularProgressIndicator(
+
+                  color: Colors.indigo,
+
+                )
+
+              : snapshot.data == null
+                  ? const CircularProgressIndicator(
+            color: Colors.indigo,
+          )
+                  : mainbody(snapshot);
         });
   }
 
-  void goToDreamAdd() async {
-    bool result = await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const DreamAdd(),),);
-    if (result != null) {
-      if (result) {
-        getDream();
-      }
-    }
-  }
+  ListView mainbody(AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
+    return ListView.builder(
+        itemCount: snapshot.data?.docs.length ?? 0,
+        itemBuilder: (context, index) {
+          DocumentSnapshot mypost = snapshot.data!.docs[index];
+          Future _showDialog() {
+            return showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text("Silmek İstermisiniz?",style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20
+                  ),),
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          statusService.removeStatus(mypost.id);
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Silelim",style:  TextStyle(
+                            color: Colors.red,
+                            fontSize: 15
+                        ),),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Vazgeç",style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 15
+                        )),
+                      ),
 
-  void getDream() {
-    var dreamsFuture = dbHelper.getDreams();
+                    ],
+                  ),
+                );
+              },
+            );
+          }
 
-    dreamsFuture.then((data) {
-      setState(() {
-        this.dreams = data;
-        dreamCount = data.length;
-        print(dreamCount);
-      });
-    });
-  }
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
+              onTap: () {
+                _showDialog();
+              },
+              child: ListTile(
+                leading: Image.network(
+                  mypost['image'],
 
-  void goToDetail(DreamModel dream) async {
-    bool result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => DreamDetail(
-                  dream: dream,
-                )));
-    if (result != null) {
-      if (result) {
-        getDream();
-      }
-    }
+                ),
+                trailing: Icon(
+                  Icons.wb_sunny_outlined,
+                  color: Colors.yellow[700],
+                ),
+                title:  Text(
+                  mypost['status'],
+                  maxLines: 2,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.blue[700],
+                      fontStyle: FontStyle.italic,
+                      fontSize: 25),
+                ),
+              ),
+            ),
+          );
+        });
   }
 }

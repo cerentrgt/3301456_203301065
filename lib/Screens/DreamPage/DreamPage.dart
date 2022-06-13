@@ -3,6 +3,8 @@ import 'package:memory_notebook/MyBackGround/DreamBackground.dart';
 import 'package:memory_notebook/Screens/DreamPage/DreamScreens/DreamAdd.dart';
 import 'package:memory_notebook/Screens/DreamPage/DreamScreens/DreamList.dart';
 
+import '../../MyBackGround/MyDrawer.dart';
+
 
 class DreamPage extends StatefulWidget {
   const DreamPage({Key? key}) : super(key: key);
@@ -15,6 +17,7 @@ class _DreamPageState extends State<DreamPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: MyDrawer(),
       appBar: AppBar(
         title: const Text("HAYALLERİN"),
         backgroundColor: Colors.indigo[300],

@@ -1,8 +1,10 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:memory_notebook/MyBackGround/DreamBackground.dart';
-import 'package:memory_notebook/data/DreamDbHelper.dart';
-import 'package:memory_notebook/models/DreamModel.dart';
+import 'package:memory_notebook/Screens/DreamPage/DreamScreens/DreamList.dart';
+
+import 'package:memory_notebook/service/StatusService.dart';
 
 class DreamAdd extends StatefulWidget {
   const DreamAdd({Key? key}) : super(key: key);
@@ -24,10 +26,18 @@ class _DreamAddState extends State<DreamAdd> {
   }
 }
 
-class DreamsBody extends StatelessWidget {
-  var dbHelper = DreamDbHelper();
-  var txtName = TextEditingController();
+class DreamsBody extends StatefulWidget {
+  @override
+  State<DreamsBody> createState() => _DreamsBodyState();
+}
+
+class _DreamsBodyState extends State<DreamsBody> {
   var txtDescriptions = TextEditingController();
+
+  StatusService statusService = StatusService();
+  final ImagePicker pickerImage = ImagePicker();
+  dynamic pickImage;
+  PickedFile? profileImage;
 
   @override
   Widget build(BuildContext context) {
@@ -53,12 +63,48 @@ class DreamsBody extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     fontSize: 25,
                     fontStyle: FontStyle.italic,
-                    color: Colors.deepPurpleAccent),
+                    color: Colors.indigoAccent),
               ),
-              buildNameField(),
               SizedBox(height: size.height * 0.03),
-              buildDescriptionsField(),
+              Center(
+                child: imagePlace(),
+              ),
               SizedBox(height: size.height * 0.03),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  SizedBox(width: size.width * 0.3),
+                  InkWell(
+                    onTap: () =>
+                        _onImageButton(ImageSource.camera, context: context),
+                    child: Icon(
+                      Icons.camera_alt,
+                      color: Colors.indigoAccent,
+                      size: 30,
+                    ),
+                  ),
+                  SizedBox(width: size.width * 0.03),
+                  InkWell(
+                    onTap: () =>
+                        _onImageButton(ImageSource.gallery, context: context),
+                    child: Icon(
+                      Icons.image,
+                      color: Colors.indigoAccent,
+                      size: 30,
+                    ),
+                  ),
+                ],
+              ),
+              Center(
+                child: Column(
+                  children: [
+
+                    SizedBox(height: size.height * 0.03),
+                    buildDescriptionsField(),
+                    SizedBox(height: size.height * 0.03),
+                  ],
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -72,10 +118,15 @@ class DreamsBody extends StatelessWidget {
                           color: Colors.white),
                     ),
                     onPressed: () {
-                      var result = dbHelper.insert(DreamModel(
-                          name: txtName.text,
-                          descriptions: txtDescriptions.text));
-                      Navigator.pop(context, true);
+
+                      statusService.addStatus(
+                          txtDescriptions.text, profileImage!);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DreamList(),
+                        ),
+                      );
                     },
                   ),
                 ],
@@ -87,14 +138,7 @@ class DreamsBody extends StatelessWidget {
     );
   }
 
-  buildNameField() {
-    return TextField(
-      decoration: const InputDecoration(labelText: "HAYALİNİN ADI NEDİR?"),
-      textCapitalization: TextCapitalization.words,
-      maxLength: 40,
-      controller: txtName,
-    );
-  }
+
 
   buildDescriptionsField() {
     return TextField(
@@ -102,5 +146,48 @@ class DreamsBody extends StatelessWidget {
       textCapitalization: TextCapitalization.words,
       controller: txtDescriptions,
     );
+  }
+
+  Widget imagePlace() {
+    double height = MediaQuery.of(context).size.height;
+    if (profileImage != null) {
+      return CircleAvatar(
+        backgroundImage: FileImage(
+          File(profileImage!.path),
+        ),
+        radius: height * 0.08,
+      );
+    } else {
+      if (pickImage != null) {
+        return CircleAvatar(
+          backgroundImage: NetworkImage(
+            pickImage,
+          ),
+          radius: height * 0.08,
+        );
+      } else {
+        return CircleAvatar(
+          backgroundImage: const AssetImage(
+            "assets/images/images_6.jpg",
+          ),
+          radius: height * 0.08,
+        );
+      }
+    }
+  }
+
+  void _onImageButton(ImageSource source, {BuildContext? context}) async {
+    try {
+      final pickedFile = await pickerImage.getImage(source: source);
+      setState(() {
+        profileImage = pickedFile;
+        if (profileImage != null) {}
+      });
+    } catch (e) {
+      setState(() {
+        pickImage = e;
+        print("Hatamiz :" + pickImage);
+      });
+    }
   }
 }

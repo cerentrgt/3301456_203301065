@@ -1,159 +1,206 @@
 import 'package:flutter/material.dart';
-import 'package:memory_notebook/Screens/PlanPage/PlansScreens/PlansAdd.dart';
-import 'package:memory_notebook/data/CalendarDbHelper.dart';
-
-import 'package:memory_notebook/models/Calendar.dart';
+import 'package:memory_notebook/Screens/PlanPage/PlansScreens/Events.dart';
 import 'package:table_calendar/table_calendar.dart';
-
-import '../../MyBackGround/PlanBackground.dart';
 
 class TableCalendarPage extends StatefulWidget {
   const TableCalendarPage({Key? key}) : super(key: key);
 
   @override
-  State<TableCalendarPage> createState() => _TableCalendarState();
+  State<TableCalendarPage> createState() => _TableCalendarPageState();
 }
 
-class _TableCalendarState extends State<TableCalendarPage> {
+class _TableCalendarPageState extends State<TableCalendarPage> {
   var format = CalendarFormat.month;
   DateTime selectedDay = DateTime.now();
   DateTime focusedDay = DateTime.now();
-  Map<DateTime, List<Calendar>>? selectedEvents;
-  List<Calendar>? calendars;
+  Map<DateTime, List<Events>>? selectedEvents;
+  var eventController = TextEditingController();
 
-  var dbHelper = CalendarDbHelper();
-  int calendarsCount = 0;
+  @override
+  void dispose() {
+    eventController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
-    getCalendars();
     selectedEvents = {};
+    super.initState();
   }
 
-  List<Calendar> _getEventsfromDay(DateTime date) {
+  List<Events> _getEventsfromDay(DateTime date) {
     return selectedEvents![date] ?? [];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("PLANLARIN"),
-        backgroundColor: Colors.indigo[300],
-      ),
-      body: PlanBackGround(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                TableCalendar(
-                  daysOfWeekStyle: DaysOfWeekStyle(
-                    weekendStyle: TextStyle(
-                      color: Colors.deepPurpleAccent[700],
-                    ),
-                    weekdayStyle: TextStyle(
-                      color: Colors.deepPurpleAccent[700],
-                    ),
+      body: Padding(
+        padding: EdgeInsets.all(5),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              TableCalendar(
+                focusedDay: focusedDay,
+                firstDay: DateTime(
+                    focusedDay.year, focusedDay.month - 3, focusedDay.day),
+                lastDay: DateTime(
+                    focusedDay.year, focusedDay.month + 3, focusedDay.day),
+                daysOfWeekStyle: DaysOfWeekStyle(
+                  weekendStyle: TextStyle(
+                    color: Colors.deepPurpleAccent[700],
                   ),
-                  focusedDay: focusedDay,
-                  firstDay: DateTime(
-                      focusedDay.year, focusedDay.month - 3, focusedDay.day),
-                  lastDay: DateTime(
-                      focusedDay.year, focusedDay.month + 3, focusedDay.day),
-                  onPageChanged: (focusDay) {
-                    focusedDay = focusDay;
-                  },
-                  calendarFormat: format,
-                  onFormatChanged: (CalendarFormat _format) {
-                    setState(() {
-                      format = _format;
-                    });
-                  },
-                  eventLoader: _getEventsfromDay,
-                  startingDayOfWeek: StartingDayOfWeek.monday,
-                  daysOfWeekVisible: true,
-                  selectedDayPredicate: (DateTime date) {
-                    return isSameDay(selectedDay, date);
-                  },
-                  onDaySelected: (selectDay, focusDay) {
-                    if (!isSameDay((selectDay), selectedDay)) {
-                      setState(() {
-                        selectedDay = selectDay;
-                        focusedDay = focusDay;
-                      });
-                    }
-                  },
-                  calendarStyle: CalendarStyle(
-                    isTodayHighlighted: true,
-                    selectedDecoration: BoxDecoration(
-                      color: Colors.blue,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    selectedTextStyle: const TextStyle(color: Colors.white),
-                    todayDecoration: BoxDecoration(
-                      color: Colors.deepPurple,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    defaultDecoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    weekendDecoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  headerStyle: const HeaderStyle(
-                    decoration: BoxDecoration(
-                      color: Color(0xFF7986CB),
-                    ),
-                    titleTextStyle: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                    leftChevronIcon: Icon(Icons.arrow_back_ios_rounded,
-                        color: Colors.black, size: 15),
-                    rightChevronIcon: Icon(Icons.arrow_forward_ios_rounded,
-                        color: Colors.black, size: 15),
-                    formatButtonVisible: false,
-                    titleCentered: true,
+                  weekdayStyle: TextStyle(
+                    color: Colors.deepPurpleAccent[700],
                   ),
                 ),
-                ..._getEventsfromDay(selectedDay).map((Calendar calendar) {
-                  return ListTile(
-                    title: Text(
-                      calendar.name,
+                startingDayOfWeek: StartingDayOfWeek.monday,
+                calendarFormat: format,
+                onDaySelected: (selectDay, focusDay) {
+                  setState(() {
+                    selectedDay = selectDay;
+                    focusedDay = focusDay;
+                  });
+                },
+                calendarStyle: CalendarStyle(
+                  isTodayHighlighted: true,
+                  selectedDecoration: BoxDecoration(
+                    color: Colors.blue,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  selectedTextStyle: const TextStyle(color: Colors.white),
+                  todayDecoration: BoxDecoration(
+                    color: Colors.deepPurple,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  defaultDecoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  weekendDecoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                ),
+                onPageChanged: (focusDay) {
+                  focusedDay = focusDay;
+                },
+                daysOfWeekVisible: true,
+                selectedDayPredicate: (DateTime date) {
+                  return isSameDay(selectedDay, date);
+                },
+                onFormatChanged: (CalendarFormat _format) {
+                  setState(() {
+                    format = _format;
+                  });
+                },
+                headerStyle: HeaderStyle(
+                  decoration: BoxDecoration(
+                    color: Color(0xFF7986CB),
+                  ),
+                  titleTextStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                  leftChevronIcon: Icon(Icons.arrow_back_ios_rounded,
+                      color: Colors.black, size: 15),
+                  rightChevronIcon: Icon(Icons.arrow_forward_ios_rounded,
+                      color: Colors.black, size: 15),
+                  formatButtonVisible: false,
+                  titleCentered: true,
+                ),
+                calendarBuilders: CalendarBuilders(
+                  selectedBuilder: (context, date, events) => Container(
+                    margin: EdgeInsets.all(4),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.indigoAccent[400],
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    subtitle: Text(calendar.descriptions),
-                  );
-                }),
-              ],
-            ),
+                    child: Text(
+                      date.day.toString(),
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  todayBuilder: (context, date, events) => Container(
+                    margin: const EdgeInsets.all(4.0),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        color: Colors.indigoAccent,
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child: Text(
+                      date.day.toString(),
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+                eventLoader: _getEventsfromDay,
+              ),
+              ..._getEventsfromDay(selectedDay).map(
+                (Events event) => ListTile(
+                  title: Text(event.title),
+                ),
+              ),
+            ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => PlansAdd()));
-        },
+        label: Text("Plan ekle"),
         backgroundColor: Colors.indigo[300],
-        label: Text("Plan Ekle"),
         icon: Icon(Icons.add),
+        onPressed: () => showAlertDialog(),
       ),
     );
   }
 
-  void getCalendars() {
-    var calendarsFuture = dbHelper.getCalendars();
-    calendarsFuture.then((data) {
-      setState(() {
-        this.calendars = data;
-        calendarsCount = data.length;
-      });
-    });
+  void showAlertDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: Text("Plan Ekle"),
+            content: TextFormField(
+              decoration: const InputDecoration(labelText: "Planın Nedir?"),
+              controller: eventController,
+              textCapitalization: TextCapitalization.words,
+            ),
+            actions: [
+              TextButton(
+                child: Text("Vazgeç"),
+                onPressed: () {
+                  return Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: Text("Ekle"),
+                onPressed: () {
+                  if (eventController.text.isEmpty) {
+                  } else {
+                    if (selectedEvents![selectedDay] != null) {
+                      selectedEvents![selectedDay]?.add(
+                        Events(title: eventController.text),
+                      );
+                    } else {
+                      selectedEvents![selectedDay] = [
+                        Events(title: eventController.text),
+                      ];
+                    }
+                  }
+
+                  Navigator.pop(context);
+                  eventController.clear();
+                  setState(() {});
+                  return;
+                },
+              ),
+            ],
+          );
+        },
+      ),
+    );
   }
 }

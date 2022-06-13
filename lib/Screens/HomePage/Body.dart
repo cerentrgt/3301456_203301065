@@ -12,6 +12,7 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
+
     return MyBackGround(
       child: SingleChildScrollView(
         child: Column(
