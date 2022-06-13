@@ -166,7 +166,7 @@ class _LoginBodyState extends State<LoginBody> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Email",
+          "E-mail",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -201,7 +201,7 @@ class _LoginBodyState extends State<LoginBody> {
                 Icons.email,
                 color: Colors.white,
               ),
-              hintText: "Email :",
+              hintText: "E-mail :",
               hintStyle: TextStyle(
                 color: Colors.white54,
               ),

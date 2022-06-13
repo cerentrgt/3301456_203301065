@@ -13,7 +13,7 @@ class _PlanPageState extends State<PlanPage> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      appBar: AppBar(title: Text("Planlama"),backgroundColor: Colors.indigo[300]),
+      appBar: AppBar(title: Text("PLANLAMA"),backgroundColor: Colors.indigo[300]),
       drawer: MyDrawer(),
       body: TableCalendarPage(),
 

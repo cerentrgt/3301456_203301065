@@ -87,7 +87,7 @@ class MemoryAddBody extends StatelessWidget {
   buildNameField() {
     return TextField(
       decoration:
-          const InputDecoration(labelText: "GÜNÜN ÖNEMİNİ ANLATAN İSMİ"),
+          const InputDecoration(labelText: "GÜNÜN ÖNEMİ?"),
       textCapitalization: TextCapitalization.words,
       maxLength: 40,
       controller: txtname,

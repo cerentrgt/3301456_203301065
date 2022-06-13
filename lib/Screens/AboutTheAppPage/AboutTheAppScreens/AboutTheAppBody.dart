@@ -50,7 +50,7 @@ class _AboutTheAppBodyState extends State<AboutTheAppBody> {
             child: Row(
               children: [
                 Text(
-                  "Uygulamamızı şu sebeblerden dolayı yaptık :  ",
+                  "Uygulamamızı şu sebeplerden dolayı tasarladık :  ",
                   style: TextStyle(fontSize: 18,color: Colors.white),
                 ),
               ],
@@ -73,7 +73,7 @@ class _AboutTheAppBodyState extends State<AboutTheAppBody> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "=> Ve son olarak Planlama sayfasını yaptık.Bütün bunları yaparken planlı ol ve yapmanız gerekenleri unutmayınız diye. ",
+              "=> Ve son olarak Planlama sayfasını yaptık.Bütün bunları yaparken planlı olmanızı ve yapmanız gerekenleri unutmamanızı hedefledik. ",
               style: TextStyle(fontSize: 17,color: Colors.white),
             ),
           ),

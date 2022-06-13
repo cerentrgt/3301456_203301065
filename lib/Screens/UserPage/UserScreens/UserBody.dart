@@ -114,12 +114,11 @@ class _UserBodyState extends State<UserBody> {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            title: Text(
-              "Nereden Yüklemek İstersiniz?",
-            ),
+
             actions: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+
                 children: [
                   SizedBox(width: 5),
                   InkWell(

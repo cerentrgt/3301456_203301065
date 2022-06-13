@@ -69,7 +69,7 @@ class _DreamListState extends State<DreamList> {
               context: context,
               builder: (context) {
                 return AlertDialog(
-                  title: const Text("Silmek İstermisiniz?",style: TextStyle(
+                  title: const Text("Silmek ister misiniz?",style: TextStyle(
                     color: Colors.black,
                     fontSize: 20
                   ),),
@@ -81,7 +81,7 @@ class _DreamListState extends State<DreamList> {
                           statusService.removeStatus(mypost.id);
                           Navigator.pop(context);
                         },
-                        child: const Text("Silelim",style:  TextStyle(
+                        child: const Text("Sil",style:  TextStyle(
                             color: Colors.red,
                             fontSize: 15
                         ),),

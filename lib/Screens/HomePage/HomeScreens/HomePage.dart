@@ -106,7 +106,7 @@ class _HomePageBodyState extends State<HomePageBody> {
         Row(
           children: [
             Text(
-              "Hala Kayıt Olmadın Mı? Hadi Kayıt Ol..!",
+              "Hâlâ Kayıt Olmadın Mı? Hadi Kayıt Ol..!",
               style: TextStyle(
                 fontSize: 15,
                 fontStyle: FontStyle.italic,

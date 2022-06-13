@@ -175,7 +175,7 @@ class _RegisterBodyState extends State<RegisterBody> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Email",
+          "E-mail",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -210,7 +210,7 @@ class _RegisterBodyState extends State<RegisterBody> {
                 Icons.email,
                 color: Colors.white,
               ),
-              hintText: "Email :",
+              hintText: "E-mail :",
               hintStyle: TextStyle(
                 color: Colors.white54,
               ),
@@ -555,7 +555,7 @@ class _RegisterBodyState extends State<RegisterBody> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "Kayıt ol",
+              "Kayıt Ol",
               style: TextStyle(
                 color: Colors.white,
                 letterSpacing: 1.5,
